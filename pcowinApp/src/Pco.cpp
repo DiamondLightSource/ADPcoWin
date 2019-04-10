@@ -11,6 +11,7 @@
 #include <cstdio>
 #include <cstring>
 #include <cstdarg>
+#include <algorithm>
 #include "epicsExport.h"
 #include "epicsThread.h"
 #include "iocsh.h"

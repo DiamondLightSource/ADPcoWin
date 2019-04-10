@@ -21,7 +21,7 @@ record(ai, "$(P)$(R)Temperature_RBV")
 {
      info("archiver", "10 Monitor")
 }
-## End dummy records for Diamond archiver
+## End dummy records for archiver
 
 include "ADBase.template"
 
