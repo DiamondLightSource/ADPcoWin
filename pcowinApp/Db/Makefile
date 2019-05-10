@@ -17,6 +17,7 @@ DB += pco_gangserver.template
 DB += PCO_dio_logic.template
 DB += PCO_dio_sim.template
 DB += pcowin_detail.template
+DB += pco_device_firmware.template
 
 #----------------------------------------------------
 # Build db files from template files
