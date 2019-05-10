@@ -10,27 +10,38 @@ from iocbuilder.modules.asyn import AsynPort
 class _pcowinTemplate(AutoSubstitution):
     TemplateFile="pco.template"
 
+class _pcoDeviceFirmwareTemplate(AutoSubstitution):
+    TemplateFile="pco_device_firmware.template"
+
 class pcowin(AsynPort):
     """Create a PCO camera detector"""
     Dependencies = (ADCore,)
     _SpecificTemplate = _pcowinTemplate
+    _DeviceTemplate = _pcoDeviceFirmwareTemplate
     UniqueName = "PORT"
 
-    def __init__(self, PORT, BUFFERS=50, MEMORY=-1, **args):
+    def __init__(self, PORT, BUFFERS=50, MEMORY=-1, NUM_CAMERA_DEVICES=10, **args):
         self.__super.__init__(PORT)
         self.__dict__.update(locals())
         makeTemplateInstance(self._SpecificTemplate, locals(), args)
+
+        P = self.__dict__['args']['P']
+        R = self.__dict__['args']['R']
+        for device_number in range(NUM_CAMERA_DEVICES):
+            self._DeviceTemplate(P=P, R=R, PORT=PORT, N=device_number)
 
     # __init__ arguments
     ArgInfo = _SpecificTemplate.ArgInfo + makeArgInfo(__init__,
         PORT = Simple('Port name for the detector', str),
         BUFFERS = Simple('Maximum number of NDArray buffers to be created', int),
-        MEMORY  = Simple('Max memory to allocate', int))
+        MEMORY  = Simple('Max memory to allocate', int),
+        NUM_CAMERA_DEVICES = Simple('Maximum number of camera devices to get firmware info for', int))
     LibFileList = ['pcowin']
     DbdFileList = ['pcowinSupport']
     SysLibFileList = []
     MakefileStringList = []
     epics_host_arch = Architecture()
+
     # For any windows architecture, install the pcocam libraries
     # and configure the required linker flags
     if epics_host_arch.find('win') >= 0:
@@ -43,8 +54,8 @@ class pcowin(AsynPort):
             MakefileStringList += ['%(ioc_name)s_LDFLAGS_WIN32 += /NOD:nafxcwd.lib /NOD:nafxcw.lib']
 
     def Initialise(self):
-        print '# pcoConfig(portName, buffers, memory)'
-        print 'pcoConfig("%(PORT)s", %(BUFFERS)d, %(MEMORY)d)' % self.__dict__
+        print '# pcoConfig(portName, buffers, memory, numCameraDevices)'
+        print 'pcoConfig("%(PORT)s", %(BUFFERS)d, %(MEMORY)d, %(NUM_CAMERA_DEVICES)d)' % self.__dict__
         if self.epics_host_arch.find('win') >= 0:
             print '# pcoApiConfig(portName)'
             print 'pcoApiConfig("%(PORT)s")' % self.__dict__
