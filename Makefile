@@ -21,7 +21,9 @@ ifeq ($(wildcard etc),etc)
 endif
 
 # Comment out the following line to disable building of example iocs
+ifeq ($(MAKE_IOCS), YES)
 DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard iocs))
+endif
 
 include $(TOP)/configure/RULES_TOP
 
