@@ -45,7 +45,7 @@ class pcowin(AsynPort):
     # For any windows architecture, install the pcocam libraries
     # and configure the required linker flags
     if epics_host_arch.find('win') >= 0:
-        LibFileList += ['SC2_DLG', 'SC2_Cam','PCO_CDLG','Pco_conv' ]
+        LibFileList += ['SC2_DLG', 'SC2_Cam','PCO_CDlg','Pco_conv' ]
         SysLibFileList += ['windowscodecs', 'Comdlg32', 'Winspool', 'Comctl32', 'nafxcw']
         DbdFileList += ['pcowinHardwareSupport']
         if epics_host_arch.find('debug') >= 0:

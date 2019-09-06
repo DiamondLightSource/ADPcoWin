@@ -15,6 +15,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <unistd.h>
 #define closesocket close
 #define RECVSIZE size_t
 #endif
@@ -42,6 +43,7 @@ SocketProtocol::RxThread::RxThread(SocketProtocol* owner, const char* threadName
 /** Constructor
  * \param[in] name A name that will be used for the thread
  * \param[in] preamble The preamble string that starts a message
+ * \param[in] maxMessageSize Maximum possible size for message
  */
 SocketProtocol::SocketProtocol(const char* name, const char* preamble, size_t maxMessageSize)
 : rxThread(this, name)

@@ -12,7 +12,6 @@
 /**
  * Timer class constructor.
  * \param[in] machine The owning state machine
- * \param[in] queue The timer queue to place the timer on
  */
 StateMachine::Timer::Timer(StateMachine* machine)
             : timer(machine->timerQueue.createTimer())
@@ -145,14 +144,9 @@ bool StateMachine::TransitionKey::operator<(const TransitionKey& other) const
 /**
  * Constructor.
  * \param[in] name The name of the machine, used in trace messages.
- * \param[in] portUser An asynUser object to use when outputting trace.
  * \param[in] portDriver The asynPortDriver object that contains the state record.
- * \param[in] traceFlag The asyn trace flag to use when outputting trace.
  * \param[in] paramRecord The asyn string parameter to contain the state record.
- * \param[in] user Pointer to the state machine user that handles transitions.
- * \param[in] initial The initial state of the machine.
- * \param[in] stateNames An array of state name strings.
- * \param[in] eventNames An array of event name strings.
+ * \param[in] tracer The TraceStream object
  * \param[in] requestQueueCapacity The size of the event queue.
  */
 StateMachine::StateMachine(const char* name,

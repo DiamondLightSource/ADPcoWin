@@ -28,6 +28,8 @@ protected:
 // API
 public:
 	void initialise();
+    void allocate(unsigned long bufferSize);
+    void free();
 };
 
 #endif

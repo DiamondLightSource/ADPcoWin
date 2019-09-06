@@ -3,6 +3,7 @@
 
 /**
  * Constructor
+ * \param[in] function The function which caused the error code
  * \param[in] errorCode The error code reported by the PCO library
  */
 PcoException::PcoException(const char* function, int errorCode)

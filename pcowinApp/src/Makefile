@@ -6,7 +6,7 @@ include $(TOP)/configure/CONFIG
 # Build a Diamond Support Module
 # -------------------------------
 
-LIBRARY_IOC += pcowin
+LIBRARY_IOC = pcowin
 
 # xxxRecord.h will be created from xxxRecord.dbd
 #DBDINC += xxx.h
@@ -58,7 +58,7 @@ LIB_INSTALLS += $(wildcard ../lib64/*.lib)
 BIN_INSTALLS += $(wildcard ../dll64/*.dll)
 USR_CFLAGS += /wd4290
 USR_CPPFLAGS += /wd4290
-#USR_LDFLAGS += /INCREMENTAL:NO /DEBUG /OPT:REF /OPT:ICF
+USR_LDFLAGS += /INCREMENTAL:NO /DEBUG /OPT:REF /OPT:ICF
 else ifeq (windows-x64, $(findstring windows-x64, $(T_A)))
 LIB_INSTALLS += $(wildcard ../lib64/*.lib)
 BIN_INSTALLS += $(wildcard ../dll64/*.dll)
@@ -70,8 +70,7 @@ USR_CPPFLAGS += -DDEBUG -O0
 USR_CFLAGS += -DDEBUG  -O0
 endif
 
-#switch off optimization for debugging
-#HOST_OPT=NO
+include $(ADCORE)/ADApp/commonLibraryMakefile
 
 # We need to link against the EPICS Base libraries
 pcowin_LIBS += $(EPICS_BASE_IOC_LIBS)

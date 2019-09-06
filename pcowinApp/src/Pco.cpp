@@ -102,8 +102,6 @@ void pcoInitHookFunction(initHookState state)
 /**
  * Constructor
  * \param[in] portName ASYN Port name
- * \param[in] maxSizeX frame size width
- * \param[in] maxSizeY frame size height
  * \param[in] maxBuffers The maximum number of NDArray buffers that the NDArrayPool for this driver is
  *            allowed to allocate. Set this to -1 to allow an unlimited number of buffers.
  * \param[in] maxMemory The maximum amount of memory that the NDArrayPool for this driver is
@@ -376,7 +374,7 @@ void Pco::initialiseOnceRunning()
 
 /**
  * Return the pco corresponding to the port name
- * \param[in] p The port name
+ * \param[in] portName The port name
  * \return The pco object, NULL if not found
  */
 Pco* Pco::getPco(const char* portName)
@@ -1522,7 +1520,7 @@ bool Pco::pollCamera()
 		paramAcqEnable = (int)acqEnable;
 	    paramCamRamUse = ramUsePercent;
 		paramCamRamUseFrames = ramUseFrames;
-		paramBuffersInUse = this->pNDArrayPool->numBuffers() - this->pNDArrayPool->numFree();
+		paramBuffersInUse = this->pNDArrayPool->getNumBuffers() - this->pNDArrayPool->getNumFree();
     }
     catch(PcoException& e)
     {

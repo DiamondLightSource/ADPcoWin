@@ -3,7 +3,7 @@
 
 /**
  * Constructor
- * \param[in] errorCode The error code reported by the PCO library
+ * \param[in] reason The reason during which the exception was raised
  */
 NDArrayException::NDArrayException(const char* reason)
     : reason(reason)

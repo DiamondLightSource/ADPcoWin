@@ -5,6 +5,7 @@ db/
 dbd/
 data/
 include/
+iocs/
 *_BAK.adl
 envPaths*
 cdCommands*
@@ -15,3 +16,4 @@ auto_settings.sav*
 .project
 .settings
 .cproject
+documentation/

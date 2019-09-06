@@ -14,7 +14,7 @@ EPICS support module for PCO cameras
 <li>Updated to areaDetector 2: ADCore 2-3-dls3, requiring ADBinaries 2-2dls2.</li>
 <li>Added a standalone example IOC.</li>
 <li>Added Camera performance statistics PVs.</li>
-<li>Added PV for "confimred stop" command which calls back once stop is complete.</li>
+<li>Added PV for "confirmed stop" command which calls back once stop is complete.</li>
 <li>Make only 16-bit mode available and remove image reversal.</li>
 </ul>
 
