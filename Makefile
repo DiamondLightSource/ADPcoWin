@@ -13,7 +13,9 @@ $(foreach dir, $(filter-out configure,$(DIRS)),$(eval $(call DIR_template,$(dir)
 iocBoot_DEPEND_DIRS += $(filter %App,$(DIRS))
 
 # Comment out the following lines to disable creation of example iocs and documentation
+ifeq ($(MAKE_ETC_AREA), YES)
 DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard etc))
+endif
 
 ifeq ($(wildcard etc),etc)
 	include $(TOP)/etc/makeIocs/Makefile.iocs
@@ -21,7 +23,7 @@ ifeq ($(wildcard etc),etc)
 endif
 
 # Comment out the following line to disable building of example iocs
-ifeq ($(MAKE_IOCS), YES)
+ifeq ($(MAKE_ETC_AREA), YES)
 DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard iocs))
 endif
 

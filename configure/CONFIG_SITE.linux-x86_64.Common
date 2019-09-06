@@ -1,4 +1,4 @@
 CROSS_COMPILER_TARGET_ARCHS =
 
-# Set MAKE_IOCS to YES to build IOC applications
-MAKE_IOCS=NO
+# Set MAKE_ETC_AREA to YES to build IOCs and DOCS
+MAKE_ETC_AREA=NO
