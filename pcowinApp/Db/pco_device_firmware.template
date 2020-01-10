@@ -1,5 +1,11 @@
 # Template for storing firmware for a single device from PCO_GetFirmwareInfo (PCO_SC2_Firmware_DESC structure)
 
+# Macros:
+#% macro, P, Device Prefix
+#% macro, R, Device Suffix
+#% macro, N, PCO hardware device number
+#% macro, PORT, Asyn Port name
+
 record(stringin, "$(P)$(R)DEVICE$(N):NAME") {
     field(DESC, "Device name")
     field(SCAN, "I/O Intr")
