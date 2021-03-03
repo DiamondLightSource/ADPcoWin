@@ -33,6 +33,10 @@ public:
     Pco(const char* portName, int maxBuffers, size_t maxMemory, int numCameraDevices);
     virtual ~Pco();
 
+// These are the methods that we override from ADDriverEx */
+public:
+  virtual asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
+
 // Parameters
 public:
     IntegerParam paramPixRate;
@@ -83,28 +87,28 @@ public:
     IntegerParam paramReboot;
     IntegerParam paramCamlinkLongGap;
     IntegerParam paramGangMode;
-	IntegerParam paramADAcquire;
-	DoubleParam paramADTemperature;
-	IntegerParam paramCameraRam;
-	IntegerParam paramCameraBusy;
-	IntegerParam paramExpTrigger;
-	IntegerParam paramAcqEnable;
-	IntegerParam paramSerialNumber;
-	IntegerParam paramHardwareVersion;
-	IntegerParam paramFirmwareVersion;
-	IntegerParam paramCamRamUseFrames;
-	IntegerParam paramArmComplete;
-	IntegerParam paramConnected;
-	IntegerParam paramBuffersReady;
-	IntegerParam paramIsEdge;
-	IntegerParam paramGetImage;
-	IntegerParam paramBuffersInUse;
-	IntegerParam paramDataFormat;
-	IntegerParam paramConfirmedStop;
-	IntegerParam paramRoiSymmetryX;
-	IntegerParam paramRoiSymmetryY;
-	IntegerParam paramInterfaceType;
-	IntegerParam paramInterfaceIsCameraLink;
+    IntegerParam paramADAcquire;
+    DoubleParam paramADTemperature;
+    IntegerParam paramCameraRam;
+    IntegerParam paramCameraBusy;
+    IntegerParam paramExpTrigger;
+    IntegerParam paramAcqEnable;
+    IntegerParam paramSerialNumber;
+    IntegerParam paramHardwareVersion;
+    IntegerParam paramFirmwareVersion;
+    IntegerParam paramCamRamUseFrames;
+    IntegerParam paramArmComplete;
+    IntegerParam paramConnected;
+    IntegerParam paramBuffersReady;
+    IntegerParam paramIsEdge;
+    IntegerParam paramGetImage;
+    IntegerParam paramBuffersInUse;
+    IntegerParam paramDataFormat;
+    IntegerParam paramConfirmedStop;
+    IntegerParam paramRoiSymmetryX;
+    IntegerParam paramRoiSymmetryY;
+    IntegerParam paramInterfaceType;
+    IntegerParam paramInterfaceIsCameraLink;
 
     // Camera devices
     std::vector<int> pcoCameraDeviceName;
@@ -133,7 +137,7 @@ public:
     static const long nybbleMask;
     static const long bcdDigitValue;
     static const int bcdPixelLength;
-	static const int binaryHeaderLength;
+    static const int binaryHeaderLength;
     static const int defaultHorzBin;
     static const int defaultVertBin;
     static const int defaultRoiMinX;
@@ -153,16 +157,16 @@ public:
     enum {xDimension=0, yDimension=1, numDimensions=2};
     enum {recordingStateRetry=10};
     enum {gangModeNone=0, gangModeServer=1, gangModeConnection=2};
-	enum {ADImageBurst=3};
-	enum {dataformatDefault=0,dataFormat5x12=1,dataFormat5x12sqrtLut=2,dataFormat5x16=3};
+    enum {ADImageBurst=3};
+    enum {dataformatDefault=0,dataFormat5x12=1,dataFormat5x12sqrtLut=2,dataFormat5x16=3};
 
 // API for use by component classes
 public:
     void post(const StateMachine::Event* req);
     void frameReceived(int bufferNumber);
-	void getFrames();
-	void pollForFrames();
-	void frameWaitFault();
+    void getFrames();
+    void pollForFrames();
+    void frameWaitFault();
     void trace(int flags, const char* format, ...);
     asynUser* getAsynUser();
     void registerDllApi(DllApi* api);
@@ -178,9 +182,9 @@ private:
     StateMachine::Timer* triggerTimer;
     DllApi* api;
     DllApi::Handle camera;
-	DllApi::CameraType camType;
+    DllApi::CameraType camType;
     DllApi::Description camDescription;
-	DllApi::Storage camStorage;
+    DllApi::Storage camStorage;
     DllApi::Transfer camTransfer;
     DllApi::Sizes camSizes;
     int shiftLowBcd;         // Shift for decoding the BCD frame number in image
@@ -241,8 +245,8 @@ private:
     int reverseY;
     int adcMode;
     int bitAlignmentMode;
-	int recoderSubmode;
-	int storageMode;
+    int recoderSubmode;
+    int storageMode;
     int acquireMode;
     int cameraSetup;
     int dataFormat;
@@ -274,10 +278,12 @@ private:
     GangServer* gangServer;
     GangConnection* gangConnection;
     PerformanceMonitor* performanceMonitor;
-	epicsMutex apiLock;
-	unsigned long memoryImageCounter;
-	int fifoQueueSize;
-	bool useGetFrames;
+    epicsMutex apiLock;
+    unsigned long memoryImageCounter;
+    int fifoQueueSize;
+    bool useGetFrames;
+    epicsEventId acquireStartedEvent;
+    int acquireStartEventTimeout;
 
 public:
     static std::map<std::string, Pco*> thePcos;
@@ -308,7 +314,7 @@ private:
     void acquisitionComplete() throw();
     void checkMemoryBuffer(int& percentUsed, int& numFrames) throw(PcoException);
     void setValidBinning(std::set<int>& valid, int max, int step) throw();
-	void cfgMemoryMode() throw(PcoException);
+    void cfgMemoryMode() throw(PcoException);
     void cfgBinningAndRoi(bool updateParams = false) throw(PcoException);
     void cfgTriggerMode() throw(PcoException);
     void cfgTimestampMode() throw(PcoException);
@@ -317,7 +323,7 @@ private:
     void cfgBitAlignmentMode() throw(PcoException);
     void cfgPixelRate() throw(PcoException);
     void cfgAcquisitionTimes() throw(PcoException);
-	void cfgStorage() throw(PcoException);
+    void cfgStorage() throw(PcoException);
     template<typename T> void sumArray(NDArray* startingArray,
             NDArray* addArray) throw();
     void initialisePixelRate();
@@ -330,44 +336,44 @@ private:
     void onCoolingSetpoint(TakeLock& takeLock);
     void onADTemperature(TakeLock& takeLock);
     void onReboot(TakeLock& takeLock);
-	void onGetImage(TakeLock& takeLock);
-	void onConfirmedStop(TakeLock& takeLock);
-	void onApplyBinningAndRoi(TakeLock& takeLock);
-	void onRequestPercentageRoi(TakeLock& takeLock);
-	void onAdcMode(TakeLock& takeLock);
-	void validateAndProcessFrame(NDArray* image);
-	void processFrame(NDArray* image);
-	void readFirstMemoryImage();
-	bool readNextMemoryImage();
-	bool roiSymmetryRequiredX();
-	bool roiSymmetryRequiredY();
+    void onGetImage(TakeLock& takeLock);
+    void onConfirmedStop(TakeLock& takeLock);
+    void onApplyBinningAndRoi(TakeLock& takeLock);
+    void onRequestPercentageRoi(TakeLock& takeLock);
+    void onAdcMode(TakeLock& takeLock);
+    void validateAndProcessFrame(NDArray* image);
+    void processFrame(NDArray* image);
+    void readFirstMemoryImage();
+    bool readNextMemoryImage();
+    bool roiSymmetryRequiredX();
+    bool roiSymmetryRequiredY();
     void getDeviceFirmwareInfo();
 
 
 public:
     // States
-	const StateMachine::State* stateUninitialised;
-	const StateMachine::State* stateUnconnected;
-	const StateMachine::State* stateIdle;
+    const StateMachine::State* stateUninitialised;
+    const StateMachine::State* stateUnconnected;
+    const StateMachine::State* stateIdle;
     const StateMachine::State* stateArmed;
     const StateMachine::State* stateAcquiring;
-	const StateMachine::State* stateUnarmedAcquiring;
-	const StateMachine::State* stateExternalAcquiring;
-	const StateMachine::State* stateUnarmedDraining;
-	const StateMachine::State* stateExternalDraining;
-	const StateMachine::State* stateDraining;
-	// Events
+    const StateMachine::State* stateUnarmedAcquiring;
+    const StateMachine::State* stateExternalAcquiring;
+    const StateMachine::State* stateUnarmedDraining;
+    const StateMachine::State* stateExternalDraining;
+    const StateMachine::State* stateDraining;
+    // Events
     const StateMachine::Event* requestInitialise;
-	const StateMachine::Event* requestTimerExpiry;
-	const StateMachine::Event* requestAcquire;
-	const StateMachine::Event* requestStop;
-	const StateMachine::Event* requestArm;
-	const StateMachine::Event* requestImageReceived;
-	const StateMachine::Event* requestDisarm;
-	const StateMachine::Event* requestTrigger;
-	const StateMachine::Event* requestReboot;
-	const StateMachine::Event* requestMakeImages;
-	const StateMachine::Event* requestApplyBinningAndRoi;
+    const StateMachine::Event* requestTimerExpiry;
+    const StateMachine::Event* requestAcquire;
+    const StateMachine::Event* requestStop;
+    const StateMachine::Event* requestArm;
+    const StateMachine::Event* requestImageReceived;
+    const StateMachine::Event* requestDisarm;
+    const StateMachine::Event* requestTrigger;
+    const StateMachine::Event* requestReboot;
+    const StateMachine::Event* requestMakeImages;
+    const StateMachine::Event* requestApplyBinningAndRoi;
 
 public:
     StateMachine::StateSelector smInitialiseWait();
