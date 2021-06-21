@@ -1,4 +1,0 @@
-ASYN        =$(SUPPORT)/asyn/4-34
-CALC        =$(SUPPORT)/calc/3-7
-ADCORE      =$(SUPPORT)/ADCore/3-6dls3
-
