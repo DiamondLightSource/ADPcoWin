@@ -24,6 +24,7 @@ public:
 	{
 	public:
 		AbstractAct() {}
+		virtual ~AbstractAct() {}
 		virtual StateSelector operator()() = 0;
 	};
 	template<class Target>

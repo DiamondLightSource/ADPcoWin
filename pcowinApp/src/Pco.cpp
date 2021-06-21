@@ -1707,7 +1707,7 @@ void Pco::post(const StateMachine::Event* req)
  */
 NDArray* Pco::allocArray(int sizeX, int sizeY, NDDataType_t dataType)
 {
-    size_t maxDims[] = {sizeX, sizeY};
+    size_t maxDims[] = {(size_t) sizeX, (size_t) sizeY};
     NDArray* image = this->pNDArrayPool->alloc(sizeof(maxDims)/sizeof(size_t),
             maxDims, dataType, 0, NULL);
     if(image == NULL)
