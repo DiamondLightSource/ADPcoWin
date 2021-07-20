@@ -39,4 +39,3 @@ Known Issues
 ------------
 
 * In releases 3-2, 3-3, 3-3-1, the pco.edge may disarm while in the middle of an externally triggered acquisition. It is recommended to use release 3-1 for stability.
-* Release 4-0 currently only supports PCO Edge 5.5 CLHS. There is testing planned for supporting CL cameras.
