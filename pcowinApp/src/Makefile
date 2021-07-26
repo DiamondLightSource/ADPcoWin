@@ -6,10 +6,7 @@ include $(TOP)/configure/CONFIG
 # Build a Diamond Support Module
 # -------------------------------
 
-LIBRARY_IOC = pcowin
-
-# xxxRecord.h will be created from xxxRecord.dbd
-#DBDINC += xxx.h
+LIBRARY_IOC_WIN32 += pcowin
 
 # xxxRecord.dbd will be installed into <top>/dbd
 DBD += pcowinSupport.dbd
@@ -48,27 +45,32 @@ USR_INCLUDES_WIN32 += -I../include/
 
 # These are the vendor libraries
 ifeq (windows-x64-debug, $(findstring windows-x64-debug, $(T_A)))
-LIB_INSTALLS += $(wildcard ../lib64/*.lib)
-BIN_INSTALLS += $(wildcard ../dll64/*.dll)
-USR_CFLAGS += /wd4290
-USR_CPPFLAGS += /wd4290
-USR_LDFLAGS += /INCREMENTAL:NO /DEBUG /OPT:REF /OPT:ICF
+  LIB_INSTALLS += $(wildcard ../lib64/*.lib)
+  BIN_INSTALLS += $(wildcard ../dll64/*.dll)
+  USR_CFLAGS += /wd4290
+  USR_CPPFLAGS += /wd4290
+  #USR_LDFLAGS += /INCREMENTAL:NO /DEBUG /OPT:REF /OPT:ICF
 else ifeq (windows-x64, $(findstring windows-x64, $(T_A)))
-LIB_INSTALLS += $(wildcard ../lib64/*.lib)
-BIN_INSTALLS += $(wildcard ../dll64/*.dll)
-USR_CFLAGS += /O2 /wd4290
-USR_CPPFLAGS += /O2 /wd4290
-USR_LDFLAGS += /INCREMENTAL:NO /DEBUG /OPT:REF /OPT:ICF
+  LIB_INSTALLS += $(wildcard ../lib64/*.lib)
+  BIN_INSTALLS += $(wildcard ../dll64/*.dll)
+  USR_CFLAGS += /O2 /wd4290
+  USR_CPPFLAGS += /O2 /wd4290
+  USR_LDFLAGS += /INCREMENTAL:NO /DEBUG /OPT:REF /OPT:ICF
 else
-USR_CPPFLAGS += -DDEBUG -O0
-USR_CFLAGS += -DDEBUG  -O0
+  USR_CPPFLAGS += -DDEBUG -O0
+  USR_CFLAGS += -DDEBUG  -O0
+endif
+
+ifeq ($(SHARED_LIBRARIES), YES)
+  USR_CPPFLAGS += -D_AFXDLL
 endif
 
 include $(ADCORE)/ADApp/commonLibraryMakefile
 
-# We need to link against the EPICS Base libraries
-pcowin_LIBS += $(EPICS_BASE_IOC_LIBS)
-
-
+include $(ADCORE)/ADApp/commonLibraryMakefile
+LIB_LIBS += PCO_CDlg Pco_conv SC2_Cam SC2_DLG
 
 include $(TOP)/configure/RULES
+
+# This rule is needed so the vendor libraries get installed before the library is built
+$(LIBNAME) $(SHRLIBNAME): $(INSTALL_BIN_INSTALLS) $(INSTALL_LIB_INSTALLS)

@@ -76,7 +76,7 @@ SocketProtocol::~SocketProtocol()
     // Close any open socket
     if(state == STATE_LISTENCONN || state == STATE_SERVER || state == STATE_CLIENTCONN)
     {
-    	closesocket(this->fd);
+        closesocket(this->fd);
     }
     delete this->txbuffer;
 }
@@ -217,7 +217,7 @@ void SocketProtocol::run()
                     else
                     {
                         // Connection failed, wait a bit before trying again
-                    	closesocket(this->fd);
+                        closesocket(this->fd);
                         epicsThreadSleep(5.0);
                     }
                 }

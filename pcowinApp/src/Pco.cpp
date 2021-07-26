@@ -14,7 +14,7 @@
 #include <algorithm>
 #include "epicsExport.h"
 #include "epicsThread.h"
-#include <epicsEvent.h>
+#include "epicsEvent.h"
 #include "iocsh.h"
 #include "db_access.h"
 #include <iostream>
@@ -49,6 +49,7 @@ const double Pco::statusPollPeriod = 2.0;
 const double Pco::acquisitionStatusPollPeriod = 5.0;
 const double Pco::armIgnoreImagesPeriod = 0.1;
 const double Pco::initialisationPeriod = 1.0;
+const double Pco::acquireStartEventTimeout = 10.0;
 const int Pco::bitsPerShortWord = 16;
 const int Pco::bitsPerNybble = 4;
 const long Pco::nybbleMask = 0x0f;
@@ -254,7 +255,6 @@ Pco::Pco(const char* portName, int maxBuffers, size_t maxMemory, int numCameraDe
         setStringParam(pcoCameraDeviceVersion[i], "");
     }
     // Event to be signalled when camera has started acquiring
-    acquireStartEventTimeout = 10;
     this->acquireStartedEvent = epicsEventMustCreate(epicsEventEmpty);
     if (!this->acquireStartedEvent) {
         printf("Pco::Pco: epicsEventCreate failure for acquire start event\n");
@@ -2208,8 +2208,6 @@ void Pco::doArm() throw(std::bad_alloc, PcoException)
     this->delayTime = paramDelayTime;
     this->cameraSetup = paramCameraSetup;
     this->dataType = paramNDDataType;
-    this->reverseX = paramADReverseX;
-    this->reverseY = paramADReverseY;
     this->minExposureTime = paramExpTimeMin;
     this->maxExposureTime = paramExpTimeMax;
     this->minDelayTime = paramDelayTimeMin;
@@ -2539,8 +2537,8 @@ void Pco::cfgBinningAndRoi(bool updateParams) throw(PcoException)
         this->reqRoiPercentY = std::min(this->reqRoiPercentY, 100);
 
         // Deduce region size from percentage
-        this->reqRoiSizeX = (this->xCamSize * this->reqRoiPercentX) / 100.0;
-        this->reqRoiSizeY = (this->yCamSize * this->reqRoiPercentY) / 100.0;
+        this->reqRoiSizeX = int((this->xCamSize * this->reqRoiPercentX) / 100.0);
+        this->reqRoiSizeY = int((this->yCamSize * this->reqRoiPercentY) / 100.0);
 
         // Deduce starting coordinates by making region symmetrical
         this->reqRoiStartX = (this->xCamSize - this->reqRoiSizeX) / 2;
@@ -3323,7 +3321,7 @@ asynStatus Pco::writeInt32(asynUser *pasynUser, int value)
             {
                 // Temporarily unlock whilst we wait for the event to say the camera is ready
                 FreeLock freelock(takeLock);
-                unsigned int eventStatus = epicsEventWaitWithTimeout(acquireStartedEvent, acquireStartEventTimeout);
+                unsigned int eventStatus = epicsEventWaitWithTimeout(acquireStartedEvent, Pco::acquireStartEventTimeout);
                 if (eventStatus != epicsEventWaitOK)
                 {
                     // We didn't get the event in time
