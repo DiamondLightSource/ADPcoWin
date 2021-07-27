@@ -214,7 +214,7 @@
 # % gui, $(PORT), readback, Region size X , $(P)$(R)SizeX_RBV
 # % gui, $(PORT), readback, Region size Y , $(P)$(R)SizeY_RBV
 # % gui, $(PORT), statusbits, Pending Changes? , $(P)$(R)ROI_FRIENDLY_RBV
-# % gui, $(PORT), enum, Validate and Set ROI , $(P)$(R)APPLY_BIN_ROI
+# % gui, $(PORT), command, Validate and Set ROI , $(P)$(R)APPLY_BIN_ROI
 # % gui, $(PORT), groupExit, Binning and Region of InterestExit
 ## PCO Hardware Sync Signals
 ## % gui, $(PORT), groupHeading, Hardware Sync Signals
