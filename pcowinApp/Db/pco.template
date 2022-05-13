@@ -6,14 +6,11 @@
 #% macro, TIMEOUT, Timeout
 #% macro, ADDR, Asyn Port address
 
-## Dummy records for archiver
-## CCD Temperature is defined in ADBase.template
-# % archiver 10 monitor
+## Add archiver field to Temperature record defined in ADBase.template
 record(ai, "$(P)$(R)Temperature_RBV")
 {
      info("archiver", "10 Monitor")
 }
-## End dummy records for archiver
 
 include "ADBase.template"
 
