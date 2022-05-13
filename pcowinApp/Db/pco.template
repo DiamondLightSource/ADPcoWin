@@ -60,27 +60,35 @@ record(mbbo, "$(P)$(R)TriggerMode")
 {
      field(ZRST, "Auto")
      field(ZRVL, "0")
-     field(ONST, "Soft")
+     field(ONST, "Soft Seq")
      field(ONVL, "1")
      field(TWST, "Ext + Soft")
      field(TWVL, "2")
      field(THST, "Ext Pulse")
      field(THVL, "3")
      field(FRST, "Ext Only")
-     field(FRVL, "5")
+     field(FRVL, "9999")
 }
 record(mbbi, "$(P)$(R)TriggerMode_RBV")
 {
      field(ZRST, "Auto")
      field(ZRVL, "0")
-     field(ONST, "Soft")
+     field(ONST, "Soft Seq")
      field(ONVL, "1")
      field(TWST, "Ext + Soft")
      field(TWVL, "2")
      field(THST, "Ext Pulse")
      field(THVL, "3")
      field(FRST, "Ext Only")
-     field(FRVL, "5")
+     field(FRVL, "9999")
+}
+
+# Record for sending a forceTrigger command for software triggering
+record(longout, "$(P)$(R)SoftTrigger")
+{
+     field(DTYP, "asynInt32")
+     field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))PCO_SOFT_TRIGGER")
+     field(DESC, "Send software trigger")
 }
 
 # % gdatag, pv, rw, $(PORT)_pcocam, PIX_RATE, Set pixel rate

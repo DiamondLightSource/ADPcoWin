@@ -168,6 +168,7 @@ Pco::Pco(const char* portName, int maxBuffers, size_t maxMemory, int numCameraDe
 , paramCameraRam(this, "PCO_CAM_RAM", 0)
 , paramCameraBusy(this, "PCO_CAM_BUSY", 0)
 , paramExpTrigger(this, "PCO_EXP_TRIGGER", 0)
+, paramSoftTrigger(this, "PCO_SOFT_TRIGGER", new AsynParam::Notify<Pco>(this, &Pco::onSoftTrigger))
 , paramAcqEnable(this, "PCO_ACQ_ENABLE", 0)
 , paramSerialNumber(this, "PCO_SERIAL_NUMBER", 0)
 , paramHardwareVersion(this, "PCO_HARDWARE_VERSION", 0)
@@ -728,7 +729,7 @@ StateMachine::StateSelector Pco::smAcquireImage()
             readFirstMemoryImage();
             result = StateMachine::fourthState;
         }
-        else if((triggerMode == DllApi::triggerAuto) || (triggerMode == DllApi::triggerExternalOnly))
+        else if(triggerMode == DllApi::triggerAuto || triggerMode == DllApi::triggerExternalOnly)
         {
             // Normal mode, automatic triggering
             acquisitionComplete();
@@ -860,7 +861,7 @@ StateMachine::StateSelector Pco::smDrainImage()
         // More draining to perform
         result = StateMachine::firstState;
     }
-    else if((triggerMode == DllApi::triggerAuto) || (triggerMode == DllApi::triggerExternalOnly))
+    else if(triggerMode == DllApi::triggerAuto || triggerMode == DllApi::triggerExternalOnly)
     {
         // Complete and disarmed
         this->api->clearRamSegment(this->camera);
@@ -1347,7 +1348,7 @@ void Pco::initialiseCamera(TakeLock& takeLock)
     paramADSizeY = roiy2-roiy1+1;
 
     // Set initial trigger mode to auto
-    this->api->setTriggerMode(this->camera, DllApi::triggerExternal);
+    this->api->setTriggerMode(this->camera, DllApi::triggerExternalAndSoftware);
 
     // Set the storage mode to FIFO
     if(this->camType.camType != DllApi::cameraTypeEdgeCLHS){
@@ -2289,7 +2290,7 @@ void Pco::doArm() throw(std::bad_alloc, PcoException)
     this->useGetFrames = this->camType.camType == DllApi::cameraType4000 &&
         this->storageMode == DllApi::storageModeFifoBuffer &&
         this->acquisitionPeriod >= 0.1 &&
-        (this->triggerMode == DllApi::triggerExternal || this->triggerMode == DllApi::triggerExternalOnly);
+        (this->triggerMode == DllApi::triggerExternalAndSoftware || this->triggerMode == DllApi::triggerExternalOnly);
     // Let's try without.
     this->useGetFrames = false;
 
@@ -2434,16 +2435,17 @@ void Pco::cfgTimestampMode() throw(PcoException)
 /**
  * Configure the trigger mode.
  * Handle the external only trigger mode by translating to the
- * regular external trigger mode.
+ * regular external and software trigger mode.
  */
 void Pco::cfgTriggerMode() throw(PcoException)
 {
     unsigned short v;
     if(this->triggerMode == DllApi::triggerExternalOnly)
     {
-        this->api->setTriggerMode(this->camera, DllApi::triggerExternal);
+        // ExternalOnly isn't a real SDK trigger mode, translate it to External and Software
+        this->api->setTriggerMode(this->camera, DllApi::triggerExternalAndSoftware);
         this->api->getTriggerMode(this->camera, &v);
-        if(v != DllApi::triggerExternal)
+        if(v != DllApi::triggerExternalAndSoftware)
         {
             this->triggerMode = (int)v;
         }
@@ -2856,9 +2858,8 @@ void Pco::doDisarm() throw()
  */
 void Pco::startCamera() throw()
 {
-    // Start the camera if we are in one of the soft modes
-    if(this->triggerMode == DllApi::triggerSoftware ||
-        this->triggerMode == DllApi::triggerExternal)
+    // Start the camera if we are in just the software trigger mode
+    if(this->triggerMode == DllApi::triggerSoftware)
     {
         unsigned short triggerState = 0;
         TakeLock takeLock(&this->apiLock);
@@ -3301,6 +3302,26 @@ void Pco::getDeviceFirmwareInfo()
         setStringParam(pcoCameraDeviceName[i], cameraDevices[i].getName());
         setIntegerParam(pcoCameraDeviceVariant[i], cameraDevices[i].getVariant());
         setStringParam(pcoCameraDeviceVersion[i], cameraDevices[i].getVersion());
+    }
+}
+
+/**
+ * Send a soft trigger
+ */
+void Pco::onSoftTrigger(TakeLock& takeLock)
+{
+    // Send a software trigger if we are acquiring and in the hybrid external and software mode
+    if(paramADAcquire==1 && this->triggerMode == DllApi::triggerExternalAndSoftware)
+    {
+        unsigned short triggerState = 0;
+        try
+        {
+            this->api->forceTrigger(this->camera, &triggerState);
+        }
+        catch(PcoException&)
+        {
+            performanceMonitor->count(takeLock, PerformanceMonitor::PERF_DRIVERERROR);
+        }
     }
 }
 

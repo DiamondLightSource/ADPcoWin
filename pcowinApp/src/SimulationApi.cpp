@@ -281,7 +281,7 @@ void SimulationApi::onConnected(TakeLock& takeLock)
  */
 void SimulationApi::onExternalTrigger(TakeLock& takeLock)
 {
-    if(paramTriggerMode == DllApi::triggerExternal ||
+    if(paramTriggerMode == DllApi::triggerExternalAndSoftware ||
             paramTriggerMode == triggerExternalExposure)
     {
         this->post(SimulationApi::requestTrigger);
@@ -1134,7 +1134,7 @@ int SimulationApi::doForceTrigger(Handle handle, unsigned short* triggered)
     if(paramConnected && paramOpen)
     {
         if(paramTriggerMode == DllApi::triggerSoftware ||
-                paramTriggerMode == DllApi::triggerExternal)
+           paramTriggerMode == DllApi::triggerExternalAndSoftware)
         {
             this->post(SimulationApi::requestTrigger);
         }

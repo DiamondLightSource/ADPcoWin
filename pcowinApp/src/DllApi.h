@@ -34,9 +34,21 @@ public:
         cameraType1200Hs=0x0100, cameraType1300=0x0200, cameraType1600=0x0220,
         cameraType2000=0x0240, cameraType4000=0x0260, cameraTypeEdge=0x1300,
         cameraTypeEdgeGl=0x1310, cameraTypeEdgeCLHS=0x1340};
-    enum {triggerAuto=0x0000, triggerSoftware=0x0001, triggerExternal=0x0002,
-        triggerExternalExposure=0x0003, triggerSourceHdsdi=0x0102,
-        triggerExternalSynchronised=0x0004, triggerExternalOnly=0x0005};
+    /* These are the trigger modes from the PCO SDK.
+     * NOTE: triggerExternalOnly is an exception, and uses triggerExternalAndSoftware
+     * as the underlying mode on the camera but prevents the user from being able to
+     * send software triggers. We use 0x270F which is 9999 in decimal
+     */
+    enum {
+        triggerAuto=0x0000,
+        triggerSoftware=0x0001,
+        triggerExternalAndSoftware=0x0002,
+        triggerExternalExposure=0x0003,
+        triggerExternalSynchronised=0x0004,
+        triggerFastExternalExposure=0x0005,
+        triggerSourceHdsdi=0x0102,
+        triggerExternalOnly=0x270F
+    };
     enum {storageModeRecorder=0, storageModeFifoBuffer=1};
     enum {recorderSubmodeSequence=0, recorderSubmodeRingBuffer=1};
     enum {timestampModeOff=0, timestampModeBinary=1,

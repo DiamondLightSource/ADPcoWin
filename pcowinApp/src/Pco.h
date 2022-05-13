@@ -88,6 +88,7 @@ public:
     IntegerParam paramCameraRam;
     IntegerParam paramCameraBusy;
     IntegerParam paramExpTrigger;
+    IntegerParam paramSoftTrigger;
     IntegerParam paramAcqEnable;
     IntegerParam paramSerialNumber;
     IntegerParam paramHardwareVersion;
@@ -348,6 +349,7 @@ private:
     bool roiSymmetryRequiredX();
     bool roiSymmetryRequiredY();
     void getDeviceFirmwareInfo();
+    void onSoftTrigger(TakeLock& takeLock);
 
 
 public:
